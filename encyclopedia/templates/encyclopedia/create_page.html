@@ -1,0 +1,20 @@
+{% extends "encyclopedia/layout.html" %}
+
+{% block title %}
+    Create Page
+{% endblock %}
+
+{% block body %}
+    <h1>Create your own page</h1>
+    <form action="{% url 'wiki:add_new_page' %}" method="post">
+        {% csrf_token %}
+        <label for="new_page_title">Page Title</label>
+        <input id="new_page_title" type="text" name="pt" placeholder="Add a Title" required />
+        <label for="new_page_content">Page Content</label>
+        <textarea id="new_page_content" name="pc" placeholder="Add a Content in Markup Language" required></textarea>
+        <input type="submit" value="Save" />
+    </form>
+
+
+
+{% endblock %}

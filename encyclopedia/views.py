@@ -1,3 +1,5 @@
+import json
+
 from django import forms
 
 from django.shortcuts import render
@@ -25,12 +27,33 @@ def entry(request, title):
 
 
 def search(request):
-    request_dict = request.GET
-    title = request_dict["q"]
+    title = request.GET["q"].casefold()
+    entries_result = []
     for item in util.list_entries():
-        title = title.casefold()
         if item.casefold() == title:
-            entry(request, item)
-    else:
-        print("ko")
-        pass
+            return entry(request, item)
+        elif title in item.casefold():
+            entries_result.append(item)
+
+    return render(request, "encyclopedia/search.html", {
+        "entries": entries_result,
+    })
+
+
+def create(request):
+    return render(request, "encyclopedia/create_page.html")
+
+
+def add_new_page(request):
+    print("im in add_new_page")
+    title = request.POST["pt"]
+    match = False
+    for item in util.list_entries():
+        if item.casefold() == title.casefold():
+            match = True
+            break
+    print(match)
+    if not match:
+        content = request.POST["pc"]
+        util.save_entry(title, content)
+        return entry(request, title)
