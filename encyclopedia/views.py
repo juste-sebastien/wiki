@@ -67,3 +67,7 @@ def add_new_page(request):
         title = title.capitalize()
         util.save_entry(title, request.POST["pc"])
         return entry(request, title)
+
+
+def edit(request):
+    print(request)
