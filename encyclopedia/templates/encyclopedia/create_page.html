@@ -6,7 +6,7 @@
 
 {% block body %}
     <h1>Create your own page</h1>
-    <form action="{% url 'wiki:add_new_page' %}" method="post">
+    <form action="{% url 'wiki:create' %}" method="post">
         {% csrf_token %}
         <label for="new_page_title">Page Title</label>
         <input id="new_page_title" type="text" name="pt" placeholder="Add a Title" required />

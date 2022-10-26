@@ -1,7 +1,6 @@
-import json
-
 from django import forms
 
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
 from . import util
@@ -28,32 +27,43 @@ def entry(request, title):
 
 def search(request):
     title = request.GET["q"].casefold()
-    entries_result = []
+    entries_result = search_for_entry(title)
+
+    if type(entries_result) != list:
+        return entry(request, entries_result)
+    else:
+        return render(request, "encyclopedia/search.html", {
+            "entries": entries_result,
+        })
+
+
+def search_for_entry(title):
+    entries_list = []
     for item in util.list_entries():
         if item.casefold() == title:
-            return entry(request, item)
+            return item
         elif title in item.casefold():
-            entries_result.append(item)
+            entries_list.append(item)
 
-    return render(request, "encyclopedia/search.html", {
-        "entries": entries_result,
-    })
+    if len(entries_list) != 0:
+        return entries_list
+    else:
+        return title
 
 
 def create(request):
-    return render(request, "encyclopedia/create_page.html")
+    if request.method == "GET":
+        return render(request, "encyclopedia/create_page.html")
+    else:
+        return add_new_page(request)
+    
 
 
 def add_new_page(request):
-    print("im in add_new_page")
-    title = request.POST["pt"]
-    match = False
-    for item in util.list_entries():
-        if item.casefold() == title.casefold():
-            match = True
-            break
-    print(match)
-    if not match:
-        content = request.POST["pc"]
-        util.save_entry(title, content)
+    title = search_for_entry(request.POST["pt"])
+    if title in util.list_entries():
+        return render(request, "encyclopedia/error.html", {"title": title,})
+    else:
+        title = title.capitalize()
+        util.save_entry(title, request.POST["pc"])
         return entry(request, title)
