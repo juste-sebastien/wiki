@@ -1,0 +1,20 @@
+{% extends "encyclopedia/layout.html" %}
+
+{% block title %}
+    Create Page {{ title }}
+{% endblock %}
+
+{% block body %}
+    <h1>Edit page {{ title }}</h1>
+    <form action="{% url 'wiki:edit' title=title%}" method="post">
+        {% csrf_token %}
+        <label for="new_page_title">Page Title</label>
+        <input id="new_page_title" type="text" name="pt" placeholder="Add a Title" value="{{ title }}" required />
+        <label for="new_page_content">Page Content</label>
+        <textarea id="new_page_content" name="pc" placeholder="Add a Content in Markup Language" required>{{ content }}</textarea>
+        <input type="submit" value="Save" />
+    </form>
+
+
+
+{% endblock %}

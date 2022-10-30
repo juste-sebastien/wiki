@@ -1,7 +1,7 @@
 from django import forms
 
 from django.http import HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, reverse
 
 from . import util
 
@@ -66,8 +66,16 @@ def add_new_page(request):
     else:
         title = title.capitalize()
         util.save_entry(title, request.POST["pc"])
-        return entry(request, title)
+        return HttpResponseRedirect(reverse("wiki:entry", args=[title]))
 
 
-def edit(request):
-    print(request)
+def edit(request, title):
+    content = util.get_entry(title)
+    if request.method == "GET":
+        return render(request, "encyclopedia/edit.html", {
+            "title": title,
+            "content": content,
+        })
+    else:
+        util.save_entry(request.POST["pt"], request.POST["pc"])
+        return HttpResponseRedirect(reverse("wiki:entry", args=[title]))

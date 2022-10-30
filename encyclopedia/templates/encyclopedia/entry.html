@@ -6,7 +6,9 @@
 
 {% block body %}
     <h1>{{ title }}</h1>
-    <a href="{% url 'wiki:edit' %}">Edit Page</a>
+    <form action="{% url 'wiki:edit' title=title %}" method="get">
+        <input type="submit" value="Edit Page" />
+    </form>
     <div>{{ content }}</div>
 
 
