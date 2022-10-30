@@ -3,6 +3,8 @@ from django import forms
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, reverse
 
+from random import randint
+
 from . import util
 
 
@@ -79,3 +81,9 @@ def edit(request, title):
     else:
         util.save_entry(request.POST["pt"], request.POST["pc"])
         return HttpResponseRedirect(reverse("wiki:entry", args=[title]))
+
+
+def random(request):
+    list_entries = util.list_entries()
+    title = list_entries[randint(0, len(list_entries)) - 1]
+    return HttpResponseRedirect(reverse("wiki:entry", args=[title]))
