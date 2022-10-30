@@ -7,6 +7,8 @@ from random import randint
 
 from . import util
 
+from markdown2 import Markdown
+
 
 def index(request):
     return render(request, "encyclopedia/index.html", {
@@ -16,7 +18,7 @@ def index(request):
 
 def entry(request, title):
     if title in util.list_entries():
-        content = util.get_entry(title)
+        content = convert_to_html(util.get_entry(title))
     else:
         error_title = "Error"
         content = f"Sorry, the page {title} seems not to exist"
@@ -87,3 +89,8 @@ def random(request):
     list_entries = util.list_entries()
     title = list_entries[randint(0, len(list_entries)) - 1]
     return HttpResponseRedirect(reverse("wiki:entry", args=[title]))
+
+
+def convert_to_html(content):
+    markdowner = Markdown()
+    return markdowner.convert(content)
